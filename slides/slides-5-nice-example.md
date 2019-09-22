@@ -39,17 +39,6 @@ implicit def drosteTraverseForQuadTreeF[A]: Traverse[QuadTreeF[A, *]] =
 
 =========================
 
-```tut:book
-val heightCoalgebra: Coalgebra[QuadTreeF[Int, *], Int] = Coalgebra {
-  case 0 => NilLeafF
-  case n =>
-    val less = n - 1
-    QuadF(n, less, less, less, less)
-}
-```
-
-=========================
-
 ```tut:book:silent
 val showAlgebra: Algebra[QuadTreeF[Int, *], List[List[Int]]] = Algebra {
   case NilLeafF => List.empty[List[Int]]
@@ -75,22 +64,24 @@ implicit def showLoL[T: Show]: Show[List[List[T]]] = { (a: List[List[T]]) =>
 =========================
 
 ```tut:book
-val treeIt: Int => List[List[Int]] = scheme.ghylo(
-  showAlgebra.gather(Gather.cata),
-  heightCoalgebra.scatter(Scatter.ana)
-)
-
-treeIt(3).show
-```
-<!-- .element: class="stretch" -->
-
-=========================
-
-```tut:book
-val noise = GCoAlgebraM[QuadTreeF[Int, *], Bounds] = CVAlgebra {
+type Height = Int
 case class Bounds(top: Int, bottom: Int, left: Int, right: Int)
-  case NilLeafF => 0
-  case QuadF(v, Nil, Nil, Nil, Nil) => List(List(v))
+
+val noise: Coalgebra[QuadTreeF[Int, *], (Height, Bounds)] = Coalgebra {
+  case (height, bound) =>
+  if(height <= 0) NilLeafF
+  else {
+    import bound._
+    val halfVert = (top + bottom) / 2
+    val halfHorz = (left + right) / 2
+    QuadF(
+      value = (top + bottom + left + right) / 4,
+      topLeft = (height - 1, Bounds(top, halfVert, left, halfHorz)),
+      topRight = (height - 1, Bounds(top, halfVert, halfHorz, right)),
+      bottomLeft = (height - 1, Bounds(halfVert, bottom, left, halfHorz)),
+      bottomRight = (height - 1, Bounds(halfVert, bottom, halfHorz, right))
+    )
+  }
 }
 ```
 <!-- .element: class="stretch" -->
@@ -98,12 +89,12 @@ case class Bounds(top: Int, bottom: Int, left: Int, right: Int)
 =========================
 
 ```tut:book
-val waveIt: Int => List[List[Int]] = scheme.ghylo(
+val waveIt: ((Height, Bounds)) => List[List[Int]] = scheme.ghylo(
   showAlgebra.gather(Gather.cata),
-  heightCoalgebra.scatter(Scatter.ana)
+  noise.scatter(Scatter.ana)
 )
 
-waveIt(Bounds(255, 255, 126, 0)).show
+waveIt(3 -> Bounds(255, 255, 126, 0)).show
 ```
 <!-- .element: class="stretch" -->
 
@@ -112,12 +103,13 @@ waveIt(Bounds(255, 255, 126, 0)).show
 ```tut:invisible
 def outputCanvas(width: Int, height:Int, data: List[Int]): Unit = {
   println(s"""
-  <canvas id="canvas-tree" width="300" height="300" data-tree='
+  <canvas id="canvas-tree" data-tree='
   {"width":$width,"height":$height, "data":[${data.mkString(",")}]}
    '></canvas>
    """)
 }
+val grid = waveIt(8 -> Bounds(255, 0, 126, 0))
 ```
 ```tut:passthrough
-outputCanvas(100, 100, List.range(0,100 * 100).map(_ => 255))
- ```
+outputCanvas(grid.length, grid.length, grid.flatten)
+```
