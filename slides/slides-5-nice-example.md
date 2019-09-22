@@ -40,12 +40,12 @@ implicit def drosteTraverseForQuadTreeF[A]: Traverse[QuadTreeF[A, *]] =
 =========================
 
 ```tut:book:silent
-val showAlgebra: Algebra[QuadTreeF[Int, *], List[List[Int]]] = Algebra {
-  case NilLeafF => List.empty[List[Int]]
+def showAlgebra[T]: Algebra[QuadTreeF[T, *], List[List[T]]] = Algebra {
+  case NilLeafF => List.empty[List[T]]
   case QuadF(v, Nil, Nil, Nil, Nil) => List(List(v))
   case QuadF(_, tl, tr, bl, br) =>
-    def merge(left: List[List[Int]],
-              right: List[List[Int]]) =
+    def merge(left: List[List[T]],
+              right: List[List[T]]) =
       left.zip(right).map(t => t._1 |+| t._2)
     merge(tl, tr) |+| merge(bl, br)
 }
@@ -56,7 +56,7 @@ val showAlgebra: Algebra[QuadTreeF[Int, *], List[List[Int]]] = Algebra {
 ```tut:book
 implicit def showLoL[T: Show]: Show[List[List[T]]] = { (a: List[List[T]]) =>
   val top = List.range(0, a.length * 2 + 1).as("-").mkString
-  a.map(_.mkString("|",",","|"))
+  a.map(_.mkString_("|",",","|"))
    .mkString(top + "\n" , "\n", "\n" + top)
 }
 ```
@@ -64,18 +64,38 @@ implicit def showLoL[T: Show]: Show[List[List[T]]] = { (a: List[List[T]]) =>
 =========================
 
 ```tut:book
-type Height = Int
-case class Bounds(top: Int, bottom: Int, left: Int, right: Int)
+case class Color(r: Int, b: Int, g: Int) {
+  private def pin(v: Int): Int = Math.min(255, Math.max(0, v))
+  def bound: Color = Color(pin(r), pin(b), pin(g))
+  def +(that: Color): Color = Color(r + that.r, b+that.b, g+that.g)
+  def /(s: Int): Color = Color(r / s, b / s, g / s)
+  def between(that: Color): Color = ((this + that) / 2).bound
 
-val noise: Coalgebra[QuadTreeF[Int, *], (Height, Bounds)] = Coalgebra {
+  def hex = f"$r%02X$g%02X$b%02X"
+}
+implicit val showColor: Show[Color] = _.hex
+val black = Color(0,0,0)
+val white = Color(255,255,255)
+val red = Color(255, 0, 0)
+val blue = Color(0, 255, 0)
+val green = Color(0, 0, 255)
+```
+
+=========================
+
+```tut:book
+type Height = Int
+case class Bounds(top: Color, bottom: Color, left: Color, right: Color)
+
+val noise: Coalgebra[QuadTreeF[Color, *], (Height, Bounds)] = Coalgebra {
   case (height, bound) =>
   if(height <= 0) NilLeafF
   else {
     import bound._
-    val halfVert = (top + bottom) / 2
-    val halfHorz = (left + right) / 2
+    val halfVert = top between bottom
+    val halfHorz = left between right
     QuadF(
-      value = (top + bottom + left + right) / 4,
+      value = ((top + bottom + left + right) / 4).bound,
       topLeft = (height - 1, Bounds(top, halfVert, left, halfHorz)),
       topRight = (height - 1, Bounds(top, halfVert, halfHorz, right)),
       bottomLeft = (height - 1, Bounds(halfVert, bottom, left, halfHorz)),
@@ -89,27 +109,29 @@ val noise: Coalgebra[QuadTreeF[Int, *], (Height, Bounds)] = Coalgebra {
 =========================
 
 ```tut:book
-val waveIt: ((Height, Bounds)) => List[List[Int]] = scheme.ghylo(
-  showAlgebra.gather(Gather.cata),
+val waveIt: ((Height, Bounds)) => List[List[Color]] = scheme.ghylo(
+  showAlgebra[Color].gather(Gather.cata),
   noise.scatter(Scatter.ana)
 )
 
-waveIt(3 -> Bounds(255, 255, 126, 0)).show
+waveIt(3 -> Bounds(white, black, white, black)).show
 ```
 <!-- .element: class="stretch" -->
 
 =========================
 
 ```tut:invisible
-def outputCanvas(width: Int, height:Int, data: List[Int]): Unit = {
+implicit val showColor: Show[Color] = c => s"""{"r":${c.r},"g":${c.g},"b":${c.g}}"""
+def outputCanvas(width: Int, height:Int, data: List[Color]): Unit = {
   println(s"""
-  <canvas id="canvas-tree" data-tree='
-  {"width":$width,"height":$height, "data":[${data.mkString(",")}]}
+  <canvas id="canvas-tree" width=500px height=500px data-tree='
+  {"width":$width,"height":$height, "data":[${data.mkString_(",")}]}
    '></canvas>
    """)
 }
-val grid = waveIt(8 -> Bounds(255, 0, 126, 0))
+val result = waveIt(10 -> Bounds(white, green, blue, red))
 ```
 ```tut:passthrough
-outputCanvas(grid.length, grid.length, grid.flatten)
+outputCanvas(result.length, result.length, result.flatten)
 ```
+<!-- .element: class="stretch" -->
