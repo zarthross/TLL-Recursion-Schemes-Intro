@@ -27,3 +27,12 @@ Slide 4
 
 FRAGMENTS!!! <!-- .element: class="fragment" data-fragment-index="1" -->
 FRAG 2 <!-- .element: class="fragment" data-fragment-index="2" -->
+
+================
+
+A sized image
+![Some Image](https://secure.meetupstatic.com/photos/event/5/1/3/7/600_458660791.jpeg) <!-- .element: height="400px" -->
+
+================
+
+[Link](https://scala-lang.org)

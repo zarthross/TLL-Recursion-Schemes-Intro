@@ -48,6 +48,15 @@ fibR(10)
 Note:
 What happens if I forget to subtract `1` from `x`?
 
+======================================
+
+What are some problems here?
+
+You have mixed concerns: <!-- .element: class="fragment" data-fragment-index="1" -->
+- How to loop<!-- .element: class="fragment" data-fragment-index="2" -->
+- What each iteration does<!-- .element: class="fragment" data-fragment-index="3" --> 
+
+
 =======================================
 
 Schemed Fibonacci part 1
