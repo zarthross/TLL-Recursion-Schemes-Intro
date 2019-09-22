@@ -20,9 +20,11 @@ tutQuick := {
 	)
 	r
 }
+scalacOptions.in(Tut) ~= filterConsoleScalacOptions
 
 
 libraryDependencies ++= Seq(
+	"io.higherkindness" %% "droste-core" % "0.7.0",
 	"org.typelevel" %% "cats-effect" % "2.0.0",
 	"org.typelevel" %% "cats-core" % "2.0.0"
 )
