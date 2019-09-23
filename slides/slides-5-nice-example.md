@@ -68,7 +68,7 @@ case class Color(r: Int, b: Int, g: Int) {
   private def pin(v: Int): Int = Math.min(255, Math.max(0, v))
   def bound: Color = Color(pin(r), pin(b), pin(g))
   def +(that: Color): Color = Color(r + that.r, b+that.b, g+that.g)
-  def /(s: Int): Color = Color(r / s, b / s, g / s)
+  def /(s: Int): Color = Color(r / s, b / s, g / s).bound
   def between(that: Color): Color = ((this + that) / 2).bound
 
   def hex = f"$r%02X$g%02X$b%02X"
@@ -85,21 +85,24 @@ val green = Color(0, 0, 255)
 
 ```tut:book
 type Height = Int
-case class Bounds(top: Color, bottom: Color, left: Color, right: Color)
+case class Bounds(topLeft: Color, bottomLeft: Color, topRight: Color, bottomRight: Color)
 
 val noise: Coalgebra[QuadTreeF[Color, *], (Height, Bounds)] = Coalgebra {
   case (height, bound) =>
   if(height <= 0) NilLeafF
   else {
     import bound._
-    val halfVert = top between bottom
-    val halfHorz = left between right
+    val halfLeft = topLeft between bottomLeft
+    val halfRight = topRight between bottomRight
+    val halfBottom = bottomLeft between bottomRight
+    val halfTop = topLeft between topRight
+    val center = (topLeft + bottomLeft + topRight + bottomRight) / 4
     QuadF(
-      value = ((top + bottom + left + right) / 4).bound,
-      topLeft = (height - 1, Bounds(top, halfVert, left, halfHorz)),
-      topRight = (height - 1, Bounds(top, halfVert, halfHorz, right)),
-      bottomLeft = (height - 1, Bounds(halfVert, bottom, left, halfHorz)),
-      bottomRight = (height - 1, Bounds(halfVert, bottom, halfHorz, right))
+      value = center,
+      topLeft = (height - 1, Bounds(topLeft, halfLeft, halfTop, center)),
+      bottomLeft = (height - 1, Bounds(halfLeft, bottomLeft, center, halfBottom)),
+      topRight = (height - 1, Bounds(halfTop, center, topRight, halfRight)),
+      bottomRight = (height - 1, Bounds(center, halfBottom, halfRight, bottomRight))
     )
   }
 }
@@ -121,7 +124,7 @@ waveIt(3 -> Bounds(white, black, white, black)).show
 =========================
 
 ```tut:invisible
-implicit val showColor: Show[Color] = c => s"""{"r":${c.r},"g":${c.g},"b":${c.g}}"""
+implicit val showColor: Show[Color] = c => s"""{"r":${c.r},"g":${c.g},"b":${c.b}}"""
 def outputCanvas(width: Int, height:Int, data: List[Color]): Unit = {
   println(s"""
   <canvas id="canvas-tree" width=500px height=500px data-tree='
