@@ -85,13 +85,15 @@ val green = Color(0, 0, 255)
 
 ```tut:book
 type Height = Int
-case class Bounds(topLeft: Color, bottomLeft: Color, topRight: Color, bottomRight: Color)
+type Bounds = QuadF[Height, Color]
+val Bounds = QuadF.apply[Height, Color] _
 
-val noise: Coalgebra[QuadTreeF[Color, *], (Height, Bounds)] = Coalgebra {
-  case (height, bound) =>
-  if(height <= 0) NilLeafF
-  else {
-    import bound._
+val noise: Coalgebra[QuadTreeF[Color, *], Bounds] = Coalgebra {
+  bound =>
+  import bound._
+  if(value <= 0) NilLeafF
+  else {    
+    val nextHeight = value - 1
     val halfLeft = topLeft between bottomLeft
     val halfRight = topRight between bottomRight
     val halfBottom = bottomLeft between bottomRight
@@ -99,10 +101,10 @@ val noise: Coalgebra[QuadTreeF[Color, *], (Height, Bounds)] = Coalgebra {
     val center = (topLeft + bottomLeft + topRight + bottomRight) / 4
     QuadF(
       value = center,
-      topLeft = (height - 1, Bounds(topLeft, halfLeft, halfTop, center)),
-      bottomLeft = (height - 1, Bounds(halfLeft, bottomLeft, center, halfBottom)),
-      topRight = (height - 1, Bounds(halfTop, center, topRight, halfRight)),
-      bottomRight = (height - 1, Bounds(center, halfBottom, halfRight, bottomRight))
+      Bounds(nextHeight, topLeft,  halfTop,   halfLeft,   center),
+      Bounds(nextHeight, halfLeft, center,    bottomLeft, halfBottom),
+      Bounds(nextHeight, halfTop,  topRight,  center,     halfRight),
+      Bounds(nextHeight, center,   halfRight, halfBottom, bottomRight)
     )
   }
 }
@@ -112,12 +114,12 @@ val noise: Coalgebra[QuadTreeF[Color, *], (Height, Bounds)] = Coalgebra {
 =========================
 
 ```tut:book
-val waveIt: ((Height, Bounds)) => List[List[Color]] = scheme.ghylo(
+val waveIt: Bounds => List[List[Color]] = scheme.ghylo(
   showAlgebra[Color].gather(Gather.cata),
   noise.scatter(Scatter.ana)
 )
 
-waveIt(3 -> Bounds(white, black, white, black)).show
+waveIt(Bounds(3, white, black, white, black)).show
 ```
 <!-- .element: class="stretch" -->
 
@@ -132,7 +134,7 @@ def outputCanvas(width: Int, height:Int, data: List[Color]): Unit = {
    '></canvas>
    """)
 }
-val result = waveIt(10 -> Bounds(white, green, blue, red))
+val result = waveIt(Bounds(10, white, green, blue, red))
 ```
 ```tut:passthrough
 outputCanvas(result.length, result.length, result.flatten)
