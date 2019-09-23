@@ -70,3 +70,5 @@ I mean...
 Recursion Schemes!
 
 ================================
+
+and it was... **awesome**<!-- .element: class="fragment" data-fragment-index="0" -->

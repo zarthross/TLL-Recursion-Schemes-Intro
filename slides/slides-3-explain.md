@@ -31,7 +31,9 @@ What the function am I talking about?
 
 
 Note:
-Like arithmetic what we mean is some operations on some 'thing'
+Like arithmetic
+
+What we mean is some operations on some 'thing'
 
 ========================
 
@@ -58,8 +60,21 @@ CoAlgebras take things apart <!-- .element: class="fragment" data-fragment-index
 
 'Morphism'
 
+Ancient Greek: <!-- .element: class="fragment" data-fragment-index="1" -->
+morphe 'shape, form' <!-- .element: class="fragment" data-fragment-index="2" -->
+
 Note:
 A transformation from one thing to another thing
+
+========================
+
+'Catamorphism'
+
+Ancient Greek: <!-- .element: class="fragment" data-fragment-index="1" -->
+
+kata 'downwards, into' <!-- .element: class="fragment" data-fragment-index="2" -->
+
+like 'catastrophe' <!-- .element: class="fragment" data-fragment-index="3" -->
 
 ========================
 
@@ -83,6 +98,18 @@ Classic Fold
 
 'Anamorphism'
 
+Ancient Greek: <!-- .element: class="fragment" data-fragment-index="1" -->
+
+ana 'up, upwards, along' <!-- .element: class="fragment" data-fragment-index="2" -->
+
+like <!-- .element: class="fragment" data-fragment-index="3" -->
+
+... I got nothing <!-- .element: class="fragment" data-fragment-index="4" -->
+
+========================
+
+'Anamorphism'
+
 `F[A] => A`
 
 ```tut:book
@@ -95,7 +122,20 @@ upTo(10)
 ```
 
 Note:
-Classic Fold
+an 'unfold'
+
+========================
+
+`Hylomorphism`
+
+Ancient Greek: <!-- .element: class="fragment" data-fragment-index="1" -->
+
+hylo- 'matter, wood' <!-- .element: class="fragment" data-fragment-index="2" -->
+
+like hylophobia <!-- .element: class="fragment" data-fragment-index="3" -->
+
+Note:
+hylophobia: Fear of forests or wooded areas
 
 ========================
 

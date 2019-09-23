@@ -15,7 +15,7 @@ Also, makes code more readable.
 
 =====================================
 
-Lets get down to brass tax....
+Lets get down to brass tacks....
 
 Example time! <!-- .element: class="fragment" data-fragment-index="1" -->
 
@@ -54,7 +54,7 @@ What are some problems here?
 
 You have mixed concerns: <!-- .element: class="fragment" data-fragment-index="1" -->
 - How to loop<!-- .element: class="fragment" data-fragment-index="2" -->
-- What each iteration does<!-- .element: class="fragment" data-fragment-index="3" --> 
+- What each iteration does<!-- .element: class="fragment" data-fragment-index="3" -->
 
 
 =======================================

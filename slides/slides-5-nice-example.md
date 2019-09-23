@@ -18,6 +18,7 @@ final case class QuadF[T, N](value: T,
   bottomLeft: N, bottomRight: N) extends QuadTreeF[T, N]
 final case object NilLeafF extends QuadTreeF[Nothing, Nothing]
 ```
+<!-- .element: class="stretch" -->
 
 =========================
 
@@ -36,6 +37,7 @@ implicit def drosteTraverseForQuadTreeF[A]: Traverse[QuadTreeF[A, *]] =
        }
    }
 ```
+<!-- .element: class="stretch" -->
 
 =========================
 
@@ -50,6 +52,7 @@ def showAlgebra[T]: Algebra[QuadTreeF[T, *], List[List[T]]] = Algebra {
     merge(tl, tr) |+| merge(bl, br)
 }
 ```
+<!-- .element: class="stretch" -->
 
 =========================
 
@@ -60,10 +63,11 @@ implicit def showLoL[T: Show]: Show[List[List[T]]] = { (a: List[List[T]]) =>
    .mkString(top + "\n" , "\n", "\n" + top)
 }
 ```
+<!-- .element: class="stretch" -->
 
 =========================
 
-```tut:book
+```tut:book:silent
 case class Color(r: Int, b: Int, g: Int) {
   private def pin(v: Int): Int = Math.min(255, Math.max(0, v))
   def bound: Color = Color(pin(r), pin(b), pin(g))
@@ -80,36 +84,52 @@ val red = Color(255, 0, 0)
 val blue = Color(0, 255, 0)
 val green = Color(0, 0, 255)
 ```
+<!-- .element: class="stretch" -->
 
 =========================
 
-```tut:book
+```tut:book:silent
 type Height = Int
 type Bounds = QuadF[Height, Color]
-val Bounds = QuadF.apply[Height, Color] _
+object Bounds {
+  def apply(v: Height, topLeft: Color, topRight: Color,
+                       bottomLeft: Color, bottomRight: Color) =
+    QuadF.apply[Height, Color](v, topLeft, topRight,
+                                  bottomLeft, bottomRight)
+}
+```
 
-val noise: Coalgebra[QuadTreeF[Color, *], Bounds] = Coalgebra {
-  bound =>
-  import bound._
-  if(value <= 0) NilLeafF
-  else {    
-    val nextHeight = value - 1
-    val halfLeft = topLeft between bottomLeft
-    val halfRight = topRight between bottomRight
-    val halfBottom = bottomLeft between bottomRight
-    val halfTop = topLeft between topRight
-    val center = (topLeft + bottomLeft + topRight + bottomRight) / 4
-    QuadF(
-      value = center,
-      Bounds(nextHeight, topLeft,  halfTop,   halfLeft,   center),
-      Bounds(nextHeight, halfLeft, center,    bottomLeft, halfBottom),
-      Bounds(nextHeight, halfTop,  topRight,  center,     halfRight),
-      Bounds(nextHeight, center,   halfRight, halfBottom, bottomRight)
-    )
-  }
+=========================
+
+```tut:book:silent
+def split(b: Bounds): QuadF[Color, Bounds] = {
+  import b._    
+  val nextHeight = value - 1
+  val halfLeft = topLeft between bottomLeft
+  val halfRight = topRight between bottomRight
+  val halfBottom = bottomLeft between bottomRight
+  val halfTop = topLeft between topRight
+  val center = (topLeft + bottomLeft + topRight + bottomRight) / 4
+QuadF(
+  value = center,
+  Bounds(nextHeight, topLeft,  halfTop,   halfLeft,   center),
+  Bounds(nextHeight, halfLeft, center,    bottomLeft, halfBottom),
+  Bounds(nextHeight, halfTop,  topRight,  center,     halfRight),
+  Bounds(nextHeight, center,   halfRight, halfBottom, bottomRight)
+)
 }
 ```
 <!-- .element: class="stretch" -->
+
+=========================
+
+```tut:book:silent
+val noise: Coalgebra[QuadTreeF[Color, *], Bounds] = Coalgebra {
+  bound =>
+  if(bound.value <= 0) NilLeafF
+  else split(bound)
+}
+```
 
 =========================
 
