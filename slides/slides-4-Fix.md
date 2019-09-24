@@ -155,7 +155,7 @@ case object LeafF extends TreeF[Nothing, Nothing]
 
 ```tut:book:silent
 import scala.collection.immutable._
-implicit def traverseTreeF[T] {
+implicit def traverseTreeF[T] = new Traverse[TreeF[T, *]] {
 def foldLeft[A, B](fa: TreeF[T, A], b: B)(f: (B, A) => B): B =
   fa match {
     case LeafF => b
@@ -184,7 +184,7 @@ def traverse[G[_]: Applicative, A, B](fa: TreeF[T, A])
 
 ===============================
 
-```tut:book
+```tut:book:silent
 def treeToListAlgebra[T]: Algebra[TreeF[T, *], List[T]] = {
   case LeafF => Nil
   case BranchF(v: T, left: List[T], right: List[T]) =>
