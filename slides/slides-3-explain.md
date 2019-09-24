@@ -149,3 +149,25 @@ Build it up, then combine it together  <!-- .element: class="fragment" data-frag
 
 ![Morphisms](https://raw.githubusercontent.com/slamdata/matryoshka/master/resources/recursion-schemes.png)
 <!-- .element: class="stretch" style="background-color:#FFFFFF" -->
+
+========================
+
+Fibonacci (revisited)
+
+```tut:book:silent
+val natCoalgebra: Coalgebra[Option, BigInt] =
+  Coalgebra(n => if (n > 0) Some(n - 1) else None)
+
+val fibAlgebra: CVAlgebra[Option, BigInt] = CVAlgebra {
+  case Some(r1 :< Some(r2 :< _)) => r1 + r2
+  case Some(_ :< None)           => 1
+  case None                      => 0
+}
+```
+```tut:book
+val fib: BigInt => BigInt = scheme.ghylo(
+  fibAlgebra.gather(Gather.histo),
+  natCoalgebra.scatter(Scatter.ana))
+
+fib(10)
+```

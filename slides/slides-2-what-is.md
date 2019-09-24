@@ -2,7 +2,7 @@
 
 =====================================
 
-`map`/`flatMap`/`filter` are to `goto`
+`if`/`for`/`while` are to `goto`
 
 as <!-- .element: class="fragment" data-fragment-index="1" -->
 
