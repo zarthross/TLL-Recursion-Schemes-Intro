@@ -171,3 +171,8 @@ val fib: BigInt => BigInt = scheme.ghylo(
 
 fib(10)
 ```
+
+Note:
+- `:< is` from `Attr`
+- `natCoalgebra` counts down
+- `fibAlgebra` adds the last 2 together

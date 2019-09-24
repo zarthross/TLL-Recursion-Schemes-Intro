@@ -2,11 +2,15 @@
 
 =====================================
 
-`if`/`for`/`while` are to `goto`
+if/for/while are to goto
 
-as <!-- .element: class="fragment" data-fragment-index="1" -->
+and <!-- .element: class="fragment" data-fragment-index="1" -->
 
-Recursion Schemes are to Recursion <!-- .element: class="fragment" data-fragment-index="2" -->
+map/flatMap/filter are to if/for/while <!-- .element: class="fragment" data-fragment-index="2" -->
+
+as <!-- .element: class="fragment" data-fragment-index="3" -->
+
+Recursion Schemes are to Recursion <!-- .element: class="fragment" data-fragment-index="4" -->
 
 Note:
 That is to say, Recursion schemes formalize patterns of
