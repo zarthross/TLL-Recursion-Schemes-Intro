@@ -1,3 +1,15 @@
+
+Libraries:
+- Scala:
+  - https://github.com/slamdata/matryoshka
+  - https://github.com/higherkindness/droste
+- Haskell: http://hackage.haskell.org/package/recursion-schemes
+- Kotlin: https://arrow-kt.io/docs/recursion/intro/
+- Javascript: https://medium.com/@JosephJnk/recursion-schemes-in-javascript-and-flow-with-static-land-recursision-schemes-97cf10599fb7
+- Typescript: https://github.com/gcanti/recursion-schemes-ts
+- Python: https://compiletoi.net/garcon-theres-a-catamorphism-in-my-python/
+
+
 --------------------------------
 
 ## Questions?
@@ -9,4 +21,5 @@ Thanks for coming!!!!!
 --------------------------------
 
 ## References
-- Motivation:
+- https://blog.sumtypeofway.com/an-introduction-to-recursion-schemes/
+- [Functional Programming with Bananas, Lenses, Envelopes and Barbed Wire](https://maartenfokkinga.github.io/utwente/mmf91m.pdf)

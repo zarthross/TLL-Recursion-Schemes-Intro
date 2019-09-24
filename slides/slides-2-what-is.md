@@ -21,6 +21,15 @@ Example time! <!-- .element: class="fragment" data-fragment-index="1" -->
 
 =====================================
 
+We'll be using
+
+![droste](https://raw.githubusercontent.com/higherkindness/droste/master/logos/droste_cocoa.png) <!-- .element: height="400px" -->
+
+Droste
+
+=====================================
+
+
 Fibonacci values
 
 ```tut:invisible
